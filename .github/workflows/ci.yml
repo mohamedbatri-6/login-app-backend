@@ -39,5 +39,6 @@ jobs:
       - name: Run tests
         env:
           MONGO_URI: mongodb://localhost:27017/loginapp_test
+          JWT_SECRET: test-secret-key-for-github-actions
           NODE_ENV: test
         run: npm test
