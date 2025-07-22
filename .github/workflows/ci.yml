@@ -1,0 +1,43 @@
+name: CI - Backend Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:5.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongo --eval 'db.stats()'" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Wait for MongoDB to be ready
+        run: sleep 15
+
+      - name: Run tests
+        env:
+          MONGO_URI: mongodb+srv://mohamedbatri:simo@cluster0.fpmxiwr.mongodb.net/loginapp?retryWrites=true&w=majority&appName=Cluster0
+
+        run: npm test
